@@ -40,7 +40,8 @@ module AjaxfulRating # :nodoc:
       @options[:wrap] = @options[:wrap].to_s == 'true'
       
       if @options[:url].nil?
-        rateable_name = ActionController::RecordIdentifier.singular_class_name(rateable)
+        singularizer = defined?(ActiveModel::Naming.singular) ? ActiveModel::Naming.method(:singular) : ActionController::RecordIdentifier.method(:singular_class_name)
+        rateable_name = singularizer.call(rateable.class)
         url = "rate_#{rateable_name}_path"
         if @template.respond_to?(url)
           @options[:url] = @template.send(url, rateable)
